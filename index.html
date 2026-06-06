@@ -8,7 +8,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
     --orange: #FF6B00;
     --orange-dim: #cc5500;
@@ -28,7 +27,6 @@
     --radius: 12px;
     --radius-sm: 8px;
   }
-
   html, body {
     min-height: 100vh;
     background: var(--bg);
@@ -36,7 +34,6 @@
     font-family: 'Inter', sans-serif;
     font-size: 15px;
   }
-
   body {
     background-image:
       radial-gradient(ellipse 80% 40% at 50% -10%, rgba(255,107,0,0.12) 0%, transparent 70%),
@@ -45,9 +42,8 @@
     padding: 0 16px 60px;
   }
 
-  /* ── HEADER ── */
   .header {
-    max-width: 640px;
+    max-width: 560px;
     margin: 0 auto;
     padding: 48px 0 32px;
     text-align: center;
@@ -81,9 +77,8 @@
     line-height: 1.6;
   }
 
-  /* ── CARD ── */
   .card {
-    max-width: 640px;
+    max-width: 560px;
     margin: 0 auto 16px;
     background: var(--bg2);
     border: 1px solid var(--border);
@@ -99,18 +94,6 @@
     margin-bottom: 16px;
   }
 
-  /* ── FORM ── */
-  .form-row {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 10px;
-  }
-  @media (max-width: 480px) { .form-row { flex-direction: column; } }
-
-  .input-wrap {
-    flex: 1;
-    position: relative;
-  }
   .input-wrap label {
     display: block;
     font-size: 11px;
@@ -120,28 +103,23 @@
     color: var(--text-muted);
     margin-bottom: 7px;
   }
-  input[type="text"],
-  select {
+  input[type="text"] {
     width: 100%;
     background: var(--bg3);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
     color: var(--text);
     font-family: 'Inter', sans-serif;
-    font-size: 14px;
-    padding: 11px 14px;
+    font-size: 15px;
+    padding: 12px 14px;
     outline: none;
     transition: border-color 0.2s;
-    appearance: none;
-    -webkit-appearance: none;
+    margin-bottom: 10px;
   }
-  input[type="text"]:focus,
-  select:focus { border-color: var(--orange); }
-  select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; cursor: pointer; }
+  input[type="text"]:focus { border-color: var(--orange); }
 
   .btn-check {
     width: 100%;
-    margin-top: 4px;
     padding: 13px;
     background: var(--orange);
     color: #000;
@@ -163,7 +141,6 @@
   .btn-check:active { transform: scale(0.98); }
   .btn-check:disabled { background: var(--bg4); color: var(--text-muted); cursor: not-allowed; transform: none; }
 
-  /* ── SPINNER ── */
   .spinner {
     width: 18px; height: 18px;
     border: 2px solid rgba(0,0,0,0.3);
@@ -174,13 +151,9 @@
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* ── RESULT SECTION ── */
-  #result-section { display: none; }
+  #result-section { max-width: 560px; margin: 0 auto; }
 
-  /* ── ALERT ── */
   .alert {
-    max-width: 640px;
-    margin: 0 auto 16px;
     border-radius: var(--radius);
     padding: 16px 20px;
     font-size: 14px;
@@ -189,33 +162,32 @@
     gap: 12px;
     align-items: flex-start;
     animation: fadeIn 0.3s ease;
+    margin-bottom: 16px;
   }
   .alert-error { background: rgba(255,59,59,0.08); border-color: rgba(255,59,59,0.25); color: #ff7070; }
-  .alert-limit { background: rgba(255,107,0,0.08); border-color: rgba(255,107,0,0.3); color: var(--orange); }
-  .alert-icon { font-size: 18px; margin-top: 1px; flex-shrink: 0; }
+  .alert-icon { font-size: 20px; flex-shrink: 0; }
   .alert-title { font-weight: 600; margin-bottom: 4px; font-size: 14px; }
   .alert-body { opacity: 0.85; line-height: 1.5; }
 
-  /* ── PROFILE CARD ── */
-  .profile-card {
-    max-width: 640px;
-    margin: 0 auto 16px;
+  /* Result card */
+  .result-card {
     background: var(--bg2);
     border: 1px solid var(--border-accent);
     border-radius: var(--radius);
     overflow: hidden;
     animation: fadeIn 0.4s ease;
+    margin-bottom: 16px;
   }
-  .profile-header {
+  .result-header {
     background: linear-gradient(135deg, rgba(255,107,0,0.15) 0%, rgba(255,107,0,0.03) 100%);
     border-bottom: 1px solid var(--border-accent);
-    padding: 20px 24px;
+    padding: 24px;
     display: flex;
     align-items: center;
     gap: 16px;
   }
   .avatar {
-    width: 56px; height: 56px;
+    width: 60px; height: 60px;
     background: var(--orange-glow);
     border: 2px solid var(--border-accent);
     border-radius: 14px;
@@ -223,23 +195,25 @@
     align-items: center;
     justify-content: center;
     font-family: 'Rajdhani', sans-serif;
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 700;
     color: var(--orange);
     flex-shrink: 0;
   }
-  .profile-name {
+  .result-name {
     font-family: 'Rajdhani', sans-serif;
-    font-size: 22px;
+    font-size: 26px;
     font-weight: 700;
     color: #fff;
     line-height: 1.1;
+    word-break: break-all;
   }
-  .profile-meta {
+  .result-meta {
     display: flex;
     gap: 8px;
-    margin-top: 5px;
+    margin-top: 6px;
     flex-wrap: wrap;
+    align-items: center;
   }
   .badge {
     font-size: 11px;
@@ -248,145 +222,57 @@
     border-radius: 100px;
     letter-spacing: 0.5px;
   }
-  .badge-region { background: rgba(255,255,255,0.07); color: var(--text-dim); border: 1px solid var(--border); }
-  .badge-level { background: var(--orange-glow); color: var(--orange); border: 1px solid var(--border-accent); }
-  .badge-version { background: rgba(0,210,106,0.1); color: var(--green); border: 1px solid rgba(0,210,106,0.2); }
+  .badge-valid { background: rgba(0,210,106,0.12); color: var(--green); border: 1px solid rgba(0,210,106,0.25); }
+  .badge-uid { background: rgba(255,255,255,0.06); color: var(--text-dim); border: 1px solid var(--border); }
+  .badge-game { background: var(--orange-glow); color: var(--orange); border: 1px solid var(--border-accent); }
 
-  /* ── STATS GRID ── */
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 1px;
-    background: var(--border);
+  .result-body {
+    padding: 20px 24px;
   }
-  .stat-item {
-    background: var(--bg2);
-    padding: 16px 20px;
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
   }
-  .stat-label {
-    font-size: 11px;
+  .info-row:last-child { border-bottom: none; }
+  .info-label {
+    font-size: 12px;
     font-weight: 600;
     letter-spacing: 1px;
     text-transform: uppercase;
     color: var(--text-muted);
-    margin-bottom: 5px;
   }
-  .stat-value {
+  .info-value {
     font-family: 'Rajdhani', sans-serif;
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 700;
     color: #fff;
+    text-align: right;
+    word-break: break-all;
+    max-width: 60%;
   }
-  .stat-value.orange { color: var(--orange); }
-  .stat-value.green { color: var(--green); }
-  .stat-value.yellow { color: var(--yellow); }
+  .info-value.orange { color: var(--orange); }
+  .info-value.green { color: var(--green); }
 
-  /* ── RANK BAR ── */
-  .rank-section {
-    padding: 16px 24px;
-    border-top: 1px solid var(--border);
-  }
-  .rank-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 6px;
-  }
-  .rank-label { font-size: 12px; color: var(--text-dim); }
-  .rank-val { font-family: 'Rajdhani', sans-serif; font-size: 15px; font-weight: 700; color: var(--orange); }
-  .rank-bar-bg {
-    height: 4px;
-    background: var(--bg4);
-    border-radius: 2px;
-    overflow: hidden;
-    margin-bottom: 12px;
-  }
-  .rank-bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--orange-dim), var(--orange));
-    border-radius: 2px;
-    transition: width 1s cubic-bezier(0.4,0,0.2,1);
-    width: 0%;
-  }
-
-  /* ── GUILD ── */
-  .guild-section {
-    padding: 16px 24px;
-    border-top: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .guild-icon {
-    width: 36px; height: 36px;
-    background: rgba(255,214,0,0.1);
-    border: 1px solid rgba(255,214,0,0.2);
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
-    flex-shrink: 0;
-  }
-  .guild-name { font-weight: 600; font-size: 14px; }
-  .guild-sub { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
-
-  /* ── SOCIAL ── */
-  .bio-section {
+  .powered {
     padding: 14px 24px;
     border-top: 1px solid var(--border);
     background: var(--bg3);
-    border-radius: 0 0 var(--radius) var(--radius);
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: center;
   }
-  .bio-text {
-    font-size: 13px;
-    color: var(--text-dim);
-    font-style: italic;
-    line-height: 1.5;
-  }
-  .bio-text::before { content: '" '; color: var(--orange); font-style: normal; }
-  .bio-text::after { content: ' "'; color: var(--orange); font-style: normal; }
+  .powered a { color: var(--text-dim); text-decoration: none; }
 
-  /* ── USAGE BAR ── */
-  .usage-card {
-    max-width: 640px;
-    margin: 0 auto;
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px 24px;
-    animation: fadeIn 0.4s ease;
-  }
-  .usage-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-  .usage-label { font-size: 12px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; font-weight: 600; }
-  .usage-nums { font-family: 'Rajdhani', sans-serif; font-size: 14px; color: var(--text-dim); }
-  .usage-nums strong { color: var(--text); }
-  .usage-bar-bg {
-    height: 4px; background: var(--bg4); border-radius: 2px; overflow: hidden;
-  }
-  .usage-bar-fill {
-    height: 100%;
-    border-radius: 2px;
-    transition: width 1s cubic-bezier(0.4,0,0.2,1);
-    width: 0%;
-  }
-  .usage-bar-fill.low { background: var(--green); }
-  .usage-bar-fill.mid { background: var(--yellow); }
-  .usage-bar-fill.high { background: var(--red); }
-
-  /* ── FOOTER ── */
   .footer {
-    max-width: 640px;
-    margin: 32px auto 0;
+    max-width: 560px;
+    margin: 24px auto 0;
     text-align: center;
     font-size: 12px;
     color: var(--text-muted);
-    line-height: 1.6;
   }
-  .footer a { color: var(--text-dim); text-decoration: none; border-bottom: 1px solid var(--border); }
 
   @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 </style>
@@ -395,37 +281,15 @@
 
 <div class="header">
   <div class="header-badge">Free Fire</div>
-  <h1>Account <span>Checker</span></h1>
-  <p>Cek info & status akun Free Fire by UID.<br>Powered by HL Gaming Official API.</p>
+  <h1>UID <span>Checker</span></h1>
+  <p>Validasi & cek nickname akun Free Fire by UID.</p>
 </div>
 
-<!-- FORM CARD -->
 <div class="card">
-  <div class="card-title">Masukkan Data Player</div>
-  <div class="form-row">
-    <div class="input-wrap" style="flex: 2">
-      <label for="uid-input">Player UID</label>
-      <input type="text" id="uid-input" placeholder="Contoh: 9351564274" maxlength="20" inputmode="numeric" />
-    </div>
-    <div class="input-wrap" style="flex: 1">
-      <label for="region-select">Region</label>
-      <select id="region-select">
-        <option value="ind">🇮🇩 Indonesia (IND)</option>
-        <option value="sg">🇸🇬 Singapore (SG)</option>
-        <option value="pk">🇵🇰 Pakistan (PK)</option>
-        <option value="br">🇧🇷 Brazil (BR)</option>
-        <option value="us">🇺🇸 USA (US)</option>
-        <option value="ru">🇷🇺 Russia (RU)</option>
-        <option value="bd">🇧🇩 Bangladesh (BD)</option>
-        <option value="vn">🇻🇳 Vietnam (VN)</option>
-        <option value="th">🇹🇭 Thailand (TH)</option>
-        <option value="tw">🇹🇼 Taiwan (TW)</option>
-        <option value="id">🇮🇩 ID (alt)</option>
-        <option value="me">ME</option>
-        <option value="sac">SAC</option>
-        <option value="na">NA</option>
-      </select>
-    </div>
+  <div class="card-title">Masukkan Player UID</div>
+  <div class="input-wrap">
+    <label for="uid-input">Player UID</label>
+    <input type="text" id="uid-input" placeholder="Contoh: 225009777" maxlength="20" inputmode="numeric" />
   </div>
   <button class="btn-check" id="btn-check" onclick="checkAccount()">
     <span id="btn-text">CEK AKUN</span>
@@ -433,234 +297,88 @@
   </button>
 </div>
 
-<!-- RESULT / ERROR SECTION -->
 <div id="result-section"></div>
 
-<!-- FOOTER -->
-<div class="footer">
-  Data dari <a href="https://www.hlgamingofficial.com" target="_blank">HL Gaming Official</a> · Limit 25 request/hari
-</div>
+<div class="footer">Powered by <a href="https://github.com/ihsangan/valid" target="_blank" style="color:var(--text-dim)">ihsangan/valid</a> · Data dari Codashop</div>
 
 <script>
-const REGIONS = {
-  ind:'Indonesia', sg:'Singapore', pk:'Pakistan', br:'Brazil',
-  us:'USA', ru:'Russia', bd:'Bangladesh', vn:'Vietnam',
-  th:'Thailand', tw:'Taiwan', id:'Indonesia (alt)', me:'Middle East', sac:'South America', na:'North America'
-};
-
-function rankLabel(pts) {
-  if (pts >= 5000) return 'Heroic';
-  if (pts >= 3000) return 'Diamond';
-  if (pts >= 2000) return 'Platinum';
-  if (pts >= 1000) return 'Gold';
-  if (pts >= 400) return 'Silver';
-  return 'Bronze';
-}
-
-function rankPct(pts) {
-  return Math.min(100, Math.round((pts / 6000) * 100));
-}
-
-function timeAgo(ts) {
-  const now = Date.now() / 1000;
-  const diff = now - ts;
-  if (diff < 3600) return `${Math.round(diff/60)} menit lalu`;
-  if (diff < 86400) return `${Math.round(diff/3600)} jam lalu`;
-  return `${Math.round(diff/86400)} hari lalu`;
-}
-
 function setLoading(on) {
   const btn = document.getElementById('btn-check');
-  const sp = document.getElementById('spinner');
-  const txt = document.getElementById('btn-text');
+  document.getElementById('spinner').style.display = on ? 'block' : 'none';
+  document.getElementById('btn-text').textContent = on ? 'MENGECEK...' : 'CEK AKUN';
   btn.disabled = on;
-  sp.style.display = on ? 'block' : 'none';
-  txt.textContent = on ? 'MENGECEK...' : 'CEK AKUN';
 }
 
 function renderError(msg) {
-  document.getElementById('result-section').style.display = 'block';
   document.getElementById('result-section').innerHTML = `
     <div class="alert alert-error">
       <div class="alert-icon">⚠</div>
       <div>
-        <div class="alert-title">Gagal mengambil data</div>
+        <div class="alert-title">Gagal</div>
         <div class="alert-body">${msg}</div>
       </div>
     </div>`;
 }
 
-function renderLimit(data) {
-  document.getElementById('result-section').style.display = 'block';
-  document.getElementById('result-section').innerHTML = `
-    <div class="alert alert-limit">
-      <div class="alert-icon">🚫</div>
-      <div>
-        <div class="alert-title">Batas Sesi Harian Penuh</div>
-        <div class="alert-body">${data.message || 'Maaf, proses Anda tidak bisa dilakukan karena batas sesi hari ini sudah penuh. Silakan coba kembali besok.'}</div>
-      </div>
-    </div>`;
-}
-
-function renderResult(data) {
-  const info = data.result?.AccountInfo || {};
-  const guild = data.result?.GuildInfo || null;
-  const social = data.result?.socialinfo || {};
-  const usage = data.usage || null;
-
-  const name = info.AccountName || 'Unknown';
+function renderResult(uid, data) {
+  const name = data.name || 'Unknown';
   const initials = name.replace(/[^\w]/g, '').slice(0, 2).toUpperCase() || 'FF';
-  const level = info.AccountLevel || '?';
-  const region = (info.AccountRegion || '').toUpperCase();
-  const likes = (info.AccountLikes || 0).toLocaleString('id-ID');
-  const brRank = info.BrRankPoint || 0;
-  const csRank = info.CsRankPoint || 0;
-  const lastLogin = info.AccountLastLogin ? timeAgo(info.AccountLastLogin) : '-';
-  const version = info.ReleaseVersion || '-';
-  const exp = (info.AccountEXP || 0).toLocaleString('id-ID');
-  const bio = social.AccountSignature || '';
+  const game = data.game || 'Free Fire';
 
-  let usageHtml = '';
-  if (usage) {
-    const used = usage.usedToday ?? 0;
-    const limit = usage.dailyLimit ?? 25;
-    const pct = Math.round((used / limit) * 100);
-    const cls = pct >= 80 ? 'high' : pct >= 50 ? 'mid' : 'low';
-    usageHtml = `
-    <div class="usage-card" id="usage-card">
-      <div class="usage-row">
-        <span class="usage-label">API Usage Hari Ini</span>
-        <span class="usage-nums"><strong>${used}</strong> / ${limit} request</span>
-      </div>
-      <div class="usage-bar-bg">
-        <div class="usage-bar-fill ${cls}" id="u-fill" style="width:0%"></div>
-      </div>
-    </div>`;
-  }
-
-  document.getElementById('result-section').style.display = 'block';
   document.getElementById('result-section').innerHTML = `
-    <div class="profile-card">
-      <div class="profile-header">
+    <div class="result-card">
+      <div class="result-header">
         <div class="avatar">${initials}</div>
         <div>
-          <div class="profile-name">${name}</div>
-          <div class="profile-meta">
-            <span class="badge badge-region">${region}</span>
-            <span class="badge badge-level">LV ${level}</span>
-            <span class="badge badge-version">${version}</span>
+          <div class="result-name">${name}</div>
+          <div class="result-meta">
+            <span class="badge badge-valid">✓ Valid</span>
+            <span class="badge badge-uid">UID: ${uid}</span>
+            <span class="badge badge-game">${game}</span>
           </div>
         </div>
       </div>
-
-      <div class="stats-grid">
-        <div class="stat-item">
-          <div class="stat-label">EXP Total</div>
-          <div class="stat-value orange">${exp}</div>
+      <div class="result-body">
+        <div class="info-row">
+          <span class="info-label">Nickname</span>
+          <span class="info-value orange">${name}</span>
         </div>
-        <div class="stat-item">
-          <div class="stat-label">Likes</div>
-          <div class="stat-value yellow">${likes}</div>
+        <div class="info-row">
+          <span class="info-label">Player UID</span>
+          <span class="info-value">${uid}</span>
         </div>
-        <div class="stat-item">
-          <div class="stat-label">BR Rank Pts</div>
-          <div class="stat-value">${brRank.toLocaleString('id-ID')}</div>
+        <div class="info-row">
+          <span class="info-label">Status Akun</span>
+          <span class="info-value green">Aktif ✓</span>
         </div>
-        <div class="stat-item">
-          <div class="stat-label">CS Rank Pts</div>
-          <div class="stat-value">${csRank.toLocaleString('id-ID')}</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-label">Last Login</div>
-          <div class="stat-value green" style="font-size:15px">${lastLogin}</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-label">Season</div>
-          <div class="stat-value">${info.AccountSeasonId || '-'}</div>
+        <div class="info-row">
+          <span class="info-label">Game</span>
+          <span class="info-value">${game}</span>
         </div>
       </div>
-
-      <div class="rank-section">
-        <div class="rank-row">
-          <span class="rank-label">Battle Royale — ${rankLabel(brRank)}</span>
-          <span class="rank-val">${brRank.toLocaleString('id-ID')} pts</span>
-        </div>
-        <div class="rank-bar-bg">
-          <div class="rank-bar-fill" id="br-bar" style="width:0%"></div>
-        </div>
-        <div class="rank-row">
-          <span class="rank-label">Clash Squad — ${rankLabel(csRank)}</span>
-          <span class="rank-val">${csRank.toLocaleString('id-ID')} pts</span>
-        </div>
-        <div class="rank-bar-bg">
-          <div class="rank-bar-fill" id="cs-bar" style="width:0%"></div>
-        </div>
-      </div>
-
-      ${guild ? `
-      <div class="guild-section">
-        <div class="guild-icon">⚔</div>
-        <div>
-          <div class="guild-name">${guild.GuildName || 'Unknown Guild'}</div>
-          <div class="guild-sub">LV ${guild.GuildLevel} · ${guild.GuildMember}/${guild.GuildCapacity} anggota</div>
-        </div>
-      </div>` : ''}
-
-      ${bio ? `<div class="bio-section"><div class="bio-text">${bio}</div></div>` : ''}
-    </div>
-    ${usageHtml}`;
-
-  // Animate bars after render
-  requestAnimationFrame(() => {
-    setTimeout(() => {
-      const brEl = document.getElementById('br-bar');
-      const csEl = document.getElementById('cs-bar');
-      const uFill = document.getElementById('u-fill');
-      if (brEl) brEl.style.width = rankPct(brRank) + '%';
-      if (csEl) csEl.style.width = rankPct(csRank) + '%';
-      if (uFill && usage) {
-        const pct = Math.round(((usage.usedToday ?? 0) / (usage.dailyLimit ?? 25)) * 100);
-        uFill.style.width = pct + '%';
-      }
-    }, 100);
-  });
+      <div class="powered">Data via <a href="https://codashop.com" target="_blank">Codashop</a></div>
+    </div>`;
 }
 
 async function checkAccount() {
   const uid = document.getElementById('uid-input').value.trim();
-  const region = document.getElementById('region-select').value;
 
-  if (!uid) {
-    renderError('Masukkan UID player terlebih dahulu.');
-    return;
-  }
-  if (!/^\d{6,20}$/.test(uid)) {
-    renderError('UID harus berupa angka (6–20 digit).');
-    return;
-  }
+  if (!uid) { renderError('Masukkan UID player terlebih dahulu.'); return; }
+  if (!/^\d{6,20}$/.test(uid)) { renderError('UID harus berupa angka (6–20 digit).'); return; }
 
   setLoading(true);
-  document.getElementById('result-section').style.display = 'none';
   document.getElementById('result-section').innerHTML = '';
 
   try {
-    const res = await fetch(`/api/check?uid=${encodeURIComponent(uid)}&region=${encodeURIComponent(region)}`);
+    const res = await fetch(`/api/check?uid=${encodeURIComponent(uid)}`);
     const data = await res.json();
 
-    if (res.status === 429 || data.limitReached) {
-      renderLimit(data);
-      return;
-    }
-    if (!res.ok) {
-      renderError(data.error || `Error ${res.status}: Gagal mengambil data.`);
-      return;
-    }
-    if (!data.result?.AccountInfo) {
-      renderError('UID tidak ditemukan atau region salah. Pastikan UID dan region sudah benar.');
+    if (!res.ok || !data.success) {
+      renderError(data.message || data.error || 'UID tidak ditemukan. Pastikan UID sudah benar.');
       return;
     }
 
-    renderResult(data);
+    renderResult(uid, data);
   } catch (err) {
     renderError('Tidak dapat terhubung ke server. Periksa koneksi internet Anda.');
   } finally {
@@ -668,7 +386,6 @@ async function checkAccount() {
   }
 }
 
-// Enter key support
 document.getElementById('uid-input').addEventListener('keydown', e => {
   if (e.key === 'Enter') checkAccount();
 });
