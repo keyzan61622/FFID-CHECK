@@ -13,13 +13,10 @@ function httpsGet(urlStr) {
         "User-Agent": "Mozilla/5.0",
       },
     };
-
     const req = https.request(options, (res) => {
       let body = "";
       res.on("data", (chunk) => { body += chunk; });
       res.on("end", () => {
-        console.log("[ff] status:", res.statusCode);
-        console.log("[ff] body preview:", body.slice(0, 500));
         try {
           resolve({ status: res.statusCode, data: JSON.parse(body) });
         } catch (e) {
@@ -27,17 +24,8 @@ function httpsGet(urlStr) {
         }
       });
     });
-
-    req.setTimeout(12000, () => {
-      req.destroy();
-      reject(new Error("timeout"));
-    });
-
-    req.on("error", (err) => {
-      console.error("[ff] request error:", err.message);
-      reject(err);
-    });
-
+    req.setTimeout(12000, () => { req.destroy(); reject(new Error("timeout")); });
+    req.on("error", (err) => reject(err));
     req.end();
   });
 }
@@ -48,25 +36,27 @@ module.exports = async function handler(req, res) {
   if (req.method === "OPTIONS") return res.status(200).end();
 
   const { uid, region } = req.query;
+  const USERUID = process.env.FF_USERUID;
+  const APIKEY  = process.env.FF_APIKEY;
+
+  // Satu log gabungan — langsung keliatan semua di Vercel
+  console.log(JSON.stringify({
+    step: "init",
+    uid: uid || "MISSING",
+    region: region || "MISSING",
+    hasUseruid: !!USERUID,
+    hasApikey: !!APIKEY,
+  }));
 
   if (!uid || !region) {
     return res.status(400).json({ error: "UID dan region wajib diisi." });
   }
 
-  const USERUID = process.env.FF_USERUID;
-  const APIKEY  = process.env.FF_APIKEY;
-
-  console.log("[ff] USERUID present:", !!USERUID);
-  console.log("[ff] APIKEY present:", !!APIKEY);
-  console.log("[ff] uid:", uid, "region:", region);
-
   if (!USERUID || !APIKEY) {
     return res.status(500).json({
       error: "Env variable missing",
-      debug: {
-        FF_USERUID: USERUID ? "ok" : "MISSING",
-        FF_APIKEY:  APIKEY  ? "ok" : "MISSING",
-      }
+      FF_USERUID: USERUID ? "ok" : "MISSING",
+      FF_APIKEY:  APIKEY  ? "ok" : "MISSING",
     });
   }
 
@@ -77,15 +67,20 @@ module.exports = async function handler(req, res) {
   urlObj.searchParams.set("useruid", USERUID);
   urlObj.searchParams.set("api", APIKEY);
 
-  console.log("[ff] hitting:", urlObj.toString().replace(APIKEY, "***").replace(USERUID, "***"));
-
   try {
+    console.log(JSON.stringify({ step: "calling_upstream" }));
+
     const { status, data } = await httpsGet(urlObj.toString());
 
-    console.log("[ff] upstream status:", status);
-    console.log("[ff] upstream data keys:", Object.keys(data || {}));
+    console.log(JSON.stringify({
+      step: "upstream_done",
+      status,
+      dataKeys: Object.keys(data || {}),
+      hasResult: !!data?.result,
+      hasUsage: !!data?.usage,
+      rawPreview: data?.raw || null,
+    }));
 
-    // Cek limit
     if (data && data.usage) {
       const remaining = typeof data.usage.remainingToday === "number" ? data.usage.remainingToday : 1;
       const used      = data.usage.usedToday ?? 0;
@@ -106,9 +101,9 @@ module.exports = async function handler(req, res) {
     return res.status(200).json(data);
 
   } catch (err) {
-    console.error("[ff] catch error:", err.message);
+    console.log(JSON.stringify({ step: "error", message: err.message }));
     if (err.message === "timeout") {
-      return res.status(504).json({ error: "Timeout. Server Free Fire tidak merespons." });
+      return res.status(504).json({ error: "Timeout. Server tidak merespons." });
     }
     return res.status(500).json({ error: err.message });
   }
