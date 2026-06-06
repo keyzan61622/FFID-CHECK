@@ -1,110 +1,35 @@
-const https = require("https");
-
-function httpsGet(urlStr) {
-  return new Promise((resolve, reject) => {
-    const parsed = new URL(urlStr);
-    const options = {
-      hostname: parsed.hostname,
-      port: 443,
-      path: parsed.pathname + parsed.search,
-      method: "GET",
-      headers: {
-        "Accept": "application/json",
-        "User-Agent": "Mozilla/5.0",
-      },
-    };
-    const req = https.request(options, (res) => {
-      let body = "";
-      res.on("data", (chunk) => { body += chunk; });
-      res.on("end", () => {
-        try {
-          resolve({ status: res.statusCode, data: JSON.parse(body) });
-        } catch (e) {
-          resolve({ status: res.statusCode, data: { raw: body.slice(0, 500) } });
-        }
-      });
-    });
-    req.setTimeout(12000, () => { req.destroy(); reject(new Error("timeout")); });
-    req.on("error", (err) => reject(err));
-    req.end();
-  });
-}
-
 module.exports = async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
   if (req.method === "OPTIONS") return res.status(200).end();
 
-  const { uid, region } = req.query;
-  const USERUID = process.env.FF_USERUID;
-  const APIKEY  = process.env.FF_APIKEY;
+  const { uid } = req.query;
 
-  // Satu log gabungan — langsung keliatan semua di Vercel
-  console.log(JSON.stringify({
-    step: "init",
-    uid: uid || "MISSING",
-    region: region || "MISSING",
-    hasUseruid: !!USERUID,
-    hasApikey: !!APIKEY,
-  }));
-
-  if (!uid || !region) {
-    return res.status(400).json({ error: "UID dan region wajib diisi." });
+  if (!uid) {
+    return res.status(400).json({ error: "UID wajib diisi." });
   }
 
-  if (!USERUID || !APIKEY) {
-    return res.status(500).json({
-      error: "Env variable missing",
-      FF_USERUID: USERUID ? "ok" : "MISSING",
-      FF_APIKEY:  APIKEY  ? "ok" : "MISSING",
-    });
+  if (!/^\d{6,20}$/.test(uid)) {
+    return res.status(400).json({ error: "UID harus berupa angka (6-20 digit)." });
   }
-
-  const urlObj = new URL("https://proapis.hlgamingofficial.com/main/games/freefire/account/api");
-  urlObj.searchParams.set("sectionName", "AllData");
-  urlObj.searchParams.set("PlayerUid", uid);
-  urlObj.searchParams.set("region", region.toLowerCase());
-  urlObj.searchParams.set("useruid", USERUID);
-  urlObj.searchParams.set("api", APIKEY);
 
   try {
-    console.log(JSON.stringify({ step: "calling_upstream" }));
+    const upstream = await fetch(`https://api.isan.eu.org/nickname/ff?id=${uid}`);
+    const data = await upstream.json();
 
-    const { status, data } = await httpsGet(urlObj.toString());
+    console.log(JSON.stringify({ uid, status: upstream.status, data }));
 
-    console.log(JSON.stringify({
-      step: "upstream_done",
-      status,
-      dataKeys: Object.keys(data || {}),
-      hasResult: !!data?.result,
-      hasUsage: !!data?.usage,
-      rawPreview: data?.raw || null,
-    }));
-
-    if (data && data.usage) {
-      const remaining = typeof data.usage.remainingToday === "number" ? data.usage.remainingToday : 1;
-      const used      = data.usage.usedToday ?? 0;
-      const limit     = data.usage.dailyLimit ?? 25;
-      if (remaining <= 0 || used >= limit) {
-        return res.status(429).json({
-          limitReached: true,
-          message: "Maaf, proses Anda tidak bisa dilakukan karena batas sesi hari ini sudah penuh. Silakan coba kembali besok.",
-          usage: data.usage,
-        });
-      }
-    }
-
-    if (status !== 200) {
-      return res.status(status).json({ error: "Upstream error " + status, detail: data });
+    if (!upstream.ok || !data.success) {
+      return res.status(404).json({
+        success: false,
+        message: "UID tidak ditemukan. Pastikan UID dan region sudah benar."
+      });
     }
 
     return res.status(200).json(data);
 
   } catch (err) {
-    console.log(JSON.stringify({ step: "error", message: err.message }));
-    if (err.message === "timeout") {
-      return res.status(504).json({ error: "Timeout. Server tidak merespons." });
-    }
-    return res.status(500).json({ error: err.message });
+    console.error("[ff] error:", err.message);
+    return res.status(500).json({ error: "Gagal terhubung ke server. Coba lagi." });
   }
 };
