@@ -1,4 +1,4 @@
-import https from "https";
+const https = require("https");
 
 function httpsGet(urlStr) {
   return new Promise((resolve, reject) => {
@@ -17,7 +17,7 @@ function httpsGet(urlStr) {
         try {
           resolve({ status: res.statusCode, data: JSON.parse(body) });
         } catch (e) {
-          reject(new Error("Invalid JSON response: " + body.slice(0, 200)));
+          reject(new Error("Invalid JSON: " + body.slice(0, 300)));
         }
       });
     });
@@ -27,7 +27,7 @@ function httpsGet(urlStr) {
   });
 }
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
   if (req.method === "OPTIONS") return res.status(200).end();
@@ -43,8 +43,11 @@ export default async function handler(req, res) {
 
   if (!USERUID || !APIKEY) {
     return res.status(500).json({
-      error: "Konfigurasi server belum lengkap. Set FF_USERUID dan FF_APIKEY di Vercel.",
-      debug: { useruid: USERUID ? "ok" : "MISSING", apikey: APIKEY ? "ok" : "MISSING" }
+      error: "Konfigurasi server belum lengkap.",
+      debug: {
+        useruid: USERUID ? "ok" : "MISSING",
+        apikey:  APIKEY  ? "ok" : "MISSING"
+      }
     });
   }
 
@@ -58,9 +61,8 @@ export default async function handler(req, res) {
   try {
     const { status, data } = await httpsGet(urlObj.toString());
 
-    // Cek limit dari response usage
-    if (data?.usage) {
-      const remaining = data.usage.remainingToday ?? 1;
+    if (data && data.usage) {
+      const remaining = typeof data.usage.remainingToday === "number" ? data.usage.remainingToday : 1;
       const used      = data.usage.usedToday ?? 0;
       const limit     = data.usage.dailyLimit ?? 25;
 
@@ -74,10 +76,7 @@ export default async function handler(req, res) {
     }
 
     if (status !== 200) {
-      return res.status(status).json({
-        error: `Upstream error ${status}`,
-        detail: data
-      });
+      return res.status(status).json({ error: "Upstream error " + status, detail: data });
     }
 
     return res.status(200).json(data);
@@ -87,6 +86,6 @@ export default async function handler(req, res) {
     if (err.message === "timeout") {
       return res.status(504).json({ error: "Request timeout. Server Free Fire tidak merespons." });
     }
-    return res.status(500).json({ error: "Server error: " + err.message });
+    return res.status(500).json({ error: err.message });
   }
-}
+};
